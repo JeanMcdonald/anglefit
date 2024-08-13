@@ -6,7 +6,7 @@ from ROOT import TVector3
 import uproot
 
 def collect(filename):
-    with uproot.open("anti.root") as f:
+    with uproot.open(filename) as f:
         tree = f["events"]
         L_E1_data = tree.arrays(["(LCandidates_h1p**2 + LCandidates_h1m**2)**0.5"])["(LCandidates_h1p**2 + LCandidates_h1m**2)**0.5"]
         L_P1x_data = tree.arrays(["LCandidates_h1px"])["LCandidates_h1px"]
@@ -17,6 +17,7 @@ def collect(filename):
         L_P2x_data = tree.arrays(["LCandidates_h2px"])["LCandidates_h2px"]
         L_P2y_data = tree.arrays(["LCandidates_h2py"])["LCandidates_h2py"]
         L_P2z_data = tree.arrays(["LCandidates_h2pz"])["LCandidates_h2pz"]
+        L_Q1_data = tree.arrays(["LCandidates_h1q"])["LCandidates_h1q"]
         L_m2_data = tree.arrays(["LCandidates_h2m"])["LCandidates_h2m"]
         Dilepton_mass_data = tree.arrays(["LCandidates_mass**2"])["LCandidates_mass**2"] #tree.arrays(["(LCandidates_h1p**2 + LCandidates_h1m**2) + (LCandidates_h2p**2 + LCandidates_h2m**2) - (LCandidates_h1px + LCandidates_h2px)**2 - (LCandidates_h1py + LCandidates_h2py)**2 - (LCandidates_h1pz + LCandidates_h2pz)**2"])["(LCandidates_h1p**2 + LCandidates_h1m**2) + (LCandidates_h2p**2 + LCandidates_h2m**2) - (LCandidates_h1px + LCandidates_h2px)**2 - (LCandidates_h1py + LCandidates_h2py)**2 - (LCandidates_h1pz + LCandidates_h2pz)**2"]
 
@@ -31,14 +32,12 @@ def collect(filename):
         Mu_P2y_data = tree.arrays(["Muons_mu2py"])["Muons_mu2py"]
         Mu_P2z_data = tree.arrays(["Muons_mu2pz"])["Muons_mu2pz"]
         Mu_q2_data = tree.arrays(["Muons_mu2q"])["Muons_mu2q"]
-        Anti_data = tree.arrays(["anti"])["anti"]
 
     costhetak_array = []
     costhetal_array = []
     phi_array = []
     for i in range(len(L_E1_data)):
         #if Dilepton_mass_data[i][0] >= 15 and Dilepton_mass_data[i][0] <= 19:
-        Lzero = not Anti_data[i][0]
         if Mu_q1_data[i][0] > 0:
             muplus = TLorentzVector(Mu_P1x_data[i][0], Mu_P1y_data[i][0], Mu_P1z_data[i][0], Mu_E1_data[i][0])
             muminus = TLorentzVector(Mu_P2x_data[i][0], Mu_P2y_data[i][0], Mu_P2z_data[i][0], Mu_E2_data[i][0])
@@ -47,9 +46,11 @@ def collect(filename):
             muplus = TLorentzVector(Mu_P2x_data[i][0], Mu_P2y_data[i][0], Mu_P2z_data[i][0], Mu_E2_data[i][0])
         if L_m1_data[i][0] > 0.5:
             proton = TLorentzVector(L_P1x_data[i][0], L_P1y_data[i][0], L_P1z_data[i][0], L_E1_data[i][0])
+            Lzero = L_Q1_data[i][0] > 0
             pion = TLorentzVector(L_P2x_data[i][0], L_P2y_data[i][0], L_P2z_data[i][0], L_E2_data[i][0])
         else:
             pion = TLorentzVector(L_P1x_data[i][0], L_P1y_data[i][0], L_P1z_data[i][0], L_E1_data[i][0])
+            Lzero = L_Q1_data[i][0] < 0
             proton = TLorentzVector(L_P2x_data[i][0], L_P2y_data[i][0], L_P2z_data[i][0], L_E2_data[i][0])
 
         mumu = muminus + muplus

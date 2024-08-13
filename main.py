@@ -1,6 +1,8 @@
 import data
 import fit
+import plot
 
-d = data.collect("anti.root")
+d = data.collect("clean.root")
 
-fit.fitpdf(d)
+res = fit.fitpdf(d)
+plot.plot(*d, res)

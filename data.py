@@ -36,6 +36,8 @@ def collect(filename):
     costhetak_array = []
     costhetal_array = []
     phi_array = []
+    original = []
+    new = []
     for i in range(len(L_E1_data)):
         #if Dilepton_mass_data[i][0] >= 15 and Dilepton_mass_data[i][0] <= 19:
         if Mu_q1_data[i][0] > 0:
@@ -52,7 +54,6 @@ def collect(filename):
             pion = TLorentzVector(L_P1x_data[i][0], L_P1y_data[i][0], L_P1z_data[i][0], L_E1_data[i][0])
             Lzero = L_Q1_data[i][0] < 0
             proton = TLorentzVector(L_P2x_data[i][0], L_P2y_data[i][0], L_P2z_data[i][0], L_E2_data[i][0])
-
         mumu = muminus + muplus
         protonpi = proton + pion
         b = muminus + muplus + proton + pion
@@ -101,5 +102,60 @@ def collect(filename):
             phi = normalppi.Angle(-normalmumu)
             if (normalmumu.Cross(normalppi).Dot(protonpiddd.Vect()) < 0.0):
                 phi = -phi
-        phi_array.append(phi)
+
+
+        protonddd = TLorentzVector(proton)
+        protonddd.Boost(bboost)
+        pionddd = TLorentzVector(pion)
+        pionddd.Boost(bboost)
+        muminusddd = TLorentzVector(muminus)
+        muminus.Boost(bboost)
+        muplusddd = TLorentzVector(muplus)
+        muplusddd.Boost(bboost)
+        plminus = TVector3(muminusddd.Vect())
+        plplus = TVector3(muplusddd.Vect())
+        pproton = TVector3(protonddd.Vect())
+        ppion = TVector3(pionddd.Vect())
+        #print('sum', (plminus + plplus + ppion + pproton).Mag())
+        # print(type(plminus.Cross(plplus)))
+        # print(type((1/(plminus.Cross(plplus)).Mag())*(plminus.Cross(plplus))))
+        el = (1/(plminus.Cross(plplus)).Mag()) * (plminus.Cross(plplus))
+        ek = (1/(pproton.Cross(ppion)).Mag()) * (pproton.Cross(ppion))
+        ez = (1/(pproton + ppion).Mag()) * (pproton + ppion)
+        # print("mag ", ez.Mag())
+        # print(ek.Dot(el)**2 + ((el.Cross(ek)).Dot(ez))**2)
+        #print(math.cos(phi), math.sin(phi), ek.Dot(el), ((el.Cross(ek)).Dot(ez)))
+        # print("a")
+        cos = ek.Dot(el)
+        sin = ((el.Cross(ek)).Dot(ez))
+        if (sin**2 + cos**2 - 1 > 10e-6):
+            print('greater')
+        if sin < 0:
+            p = math.acos(cos) - math.pi
+        else:
+            p = math.acos(cos)
+        #print("diff ", p - phi)
+        #phi_array.append(p)
+        # phi_array.append(p)
+        phi_array.append(p)
+        original.append(phi)
     return (costhetal_array, costhetak_array, phi_array)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

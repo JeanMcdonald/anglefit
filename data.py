@@ -1,5 +1,4 @@
 import math
-
 import ROOT
 from ROOT import TLorentzVector
 from ROOT import TVector3
@@ -36,10 +35,8 @@ def collect(filename):
     costhetak_array = []
     costhetal_array = []
     phi_array = []
-    original = []
-    new = []
+    mass_array = []
     for i in range(len(L_E1_data)):
-        #if Dilepton_mass_data[i][0] >= 15 and Dilepton_mass_data[i][0] <= 19:
         if Mu_q1_data[i][0] > 0:
             muplus = TLorentzVector(Mu_P1x_data[i][0], Mu_P1y_data[i][0], Mu_P1z_data[i][0], Mu_E1_data[i][0])
             muminus = TLorentzVector(Mu_P2x_data[i][0], Mu_P2y_data[i][0], Mu_P2z_data[i][0], Mu_E2_data[i][0])
@@ -138,8 +135,8 @@ def collect(filename):
         #phi_array.append(p)
         # phi_array.append(p)
         phi_array.append(p)
-        original.append(phi)
-    return (costhetal_array, costhetak_array, phi_array)
+        mass_array.append(b.Mag())
+    return (costhetal_array, costhetak_array, phi_array, mass_array)
 
 
 

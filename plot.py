@@ -35,7 +35,7 @@ class ThetaKPDF(zfit.pdf.ZPDF):
         K1cc = params["K1cc"]
         K2ss = params["K2ss"]
         K2cc = params["K2cc"]
-        return 2 * ((K1ss*4/3 + K1cc*2/3) + (K2ss*4/3 + K2cc*2/3)*data)
+        return ((K1ss*8/3 + K1cc*4/3) + (K2ss*8/3 + K2cc*4/3)*data)
 
 class PhiPDF(zfit.pdf.ZPDF):
     _PARAMS = ("K1ss", "K1cc", "K3s", "K4s")  # specify which parameters to take
@@ -90,7 +90,7 @@ def plotdata(data, name):
     plt.show()
 
 
-def plot(thetal_array, thetak_array, phi_array, result):
+def plot(thetal_array, thetak_array, phi_array, mass_array, result):
 
     def plot_model(model, data, name):
         size_normal = len(thetal_array)
@@ -123,6 +123,13 @@ def plot(thetal_array, thetak_array, phi_array, result):
     phi = PhiPDF(obs=obs, K1ss=result.params['K1ss']['value'], K1cc=result.params['K1cc']['value'], K3s=result.params['K3s']['value'], K4s=result.params['K4s']['value'])
     plot_model(phi, data, "phi")
 
+    npmass = np.transpose(np.array(mass_array))
+    obs = zfit.Space("mass", limits=(5.5, 6))
+    data = zfit.Data.from_numpy(obs=obs, array=npmass)
+    crystalball1 = zfit.pdf.CrystalBall(mu=result.params['mu']['value'], sigma=result.params['sigma']['value'], obs=obs, alpha=result.params['alpha']['value'], n=result.params['n']['value'])
+    crystalball2 = zfit.pdf.CrystalBall(mu=result.params['mu']['value'], sigma=result.params['sigma2']['value'], obs=obs, alpha=result.params['alpha2']['value'], n=result.params['n2']['value'])
+    crystalball = zfit.pdf.SumPDF([crystalball1, crystalball2], result.params['f']['value'])
+    plot_model(crystalball, data, "mass")
     #
     # nparr = np.array(thetak_array)
     # obs1 = zfit.Space("thetak", limits=(-10, 10))

@@ -4,12 +4,14 @@ import plot
 import plotpoly
 import polynomialfit
 
+
 d = data.collect("clean.root")
 
-res = fit.fitpdf(d[:3])
+res = fit.fit_with_bkg(d[:4], 1)
 
-plot.plot(*d[:3], res)
-print(res)
+print(res[0])
+plot.plot(*res[1], res[0])
+print(res[0])
 #res = polynomialfit.fitpdf(d)
 
 #res = fit.fit_with_bkg(d)
